@@ -1,6 +1,6 @@
 import img1 from "../../../assets/Images/widi3.png";
 
-export const Grid2sec3 = () => {
+export const Partner = () => {
   return (
     <div className="md:bg-[#0b0d21] border-1 border-[#1d1c44] text-white p-4 md:mt-0   rounded-2xl    ">
       <div className="flex flex-col  space-x-2 mb-3 gap-4">

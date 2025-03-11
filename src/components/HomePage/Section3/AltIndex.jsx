@@ -2,7 +2,7 @@ import img1 from "../../../assets/Images/widmeter.png";
 import img2 from "../../../assets/Images/widgetbar2.png";
 import img3 from "../../../assets/Images/stat1.png";
 
-export const Grid2sec2 = () => {
+export const AltIndex = () => {
   return (
     <div className="md:bg-[#0b0d21]  border-1 border-[#1d1c44] p-4 rounded-2xl  ">
       <div className="flex items-center justify-between space-x-2">
@@ -26,7 +26,7 @@ export const Grid2sec2 = () => {
         <span className="text-[#f0bdfd]">Bitcoin Season</span>
         <span className="text-[#b1a2e4]">Altcoin Season</span>
       </div>
-      <div className="2xl:mt-1 xl:mt-2">
+      <div className="2xl:mt-0 xl:mt-2">
         <img src={img3} alt="Bar" className="w-[100%]" />
       </div>
     </div>
