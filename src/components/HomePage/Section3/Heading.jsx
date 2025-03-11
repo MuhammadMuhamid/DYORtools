@@ -1,6 +1,6 @@
 import img1 from "../../../assets/Images/sec3bgh.png";
 
-export const Grid1sec1 = () => {
+export const Heading = () => {
   return (
     <div className="relative">
       <div className="absolute -z-10">

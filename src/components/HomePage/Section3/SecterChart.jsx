@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   LineChart,
   Line,
@@ -9,7 +9,11 @@ import {
 } from "recharts";
 import img2 from "../../../assets/Images/widi3.png";
 
-export const Grid1sec3 = () => {
+const API_KEY = "4a08f352-b385-48cc-b705-0740bb093214";
+const API_URL =
+  "https://pro-api.coinmarketcap.com/v1/cryptocurrency/categories";
+
+export const SecterChart = () => {
   const colors = {
     MEME: "#00ff00",
     L1: "#99ff99",
@@ -19,44 +23,65 @@ export const Grid1sec3 = () => {
     AI: "#ff3366",
   };
 
-  const data2 = [
-    {
-      date: "26.01",
-      MEME: -2,
-      L1: -1,
-      DEFI: -1.5,
-      L2: -3,
-      GAMING: -2.5,
-      AI: -4,
-    },
-    { date: "27.01", MEME: -5, L1: -3, DEFI: -2, L2: -6, GAMING: -4.5, AI: -7 },
-    { date: "28.01", MEME: -8, L1: -5, DEFI: -4, L2: -9, GAMING: -7, AI: -10 },
-    {
-      date: "29.01",
-      MEME: -10,
-      L1: -7,
-      DEFI: -6,
-      L2: -12,
-      GAMING: -9,
-      AI: -13,
-    },
-    { date: "30.01", MEME: -6, L1: -3, DEFI: -2, L2: -5, GAMING: -4, AI: -8 },
-    { date: "31.01", MEME: -3, L1: -1, DEFI: 0, L2: -2, GAMING: -1.5, AI: -5 },
-    {
-      date: "01.02",
-      MEME: -12,
-      L1: -9,
-      DEFI: -8,
-      L2: -14,
-      GAMING: -11,
-      AI: -16,
-    },
-  ];
+  const categoryMapping = {
+    "Layer 2": "L2",
+    DeFi: "DEFI",
+    Gaming: "GAMING",
+    "Layer 1": "L1",
+    Memes: "MEME",
+    "AI & Big Data": "AI",
+  };
 
-  // Manage the visibility of each sector
+  const [data, setData] = useState([]);
   const [visibleLines, setVisibleLines] = useState(Object.keys(colors));
 
-  // Toggle the visibility of a sector
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch(API_URL, {
+          headers: { "X-CMC_PRO_API_KEY": API_KEY },
+        });
+        const result = await response.json();
+
+        if (result.data) {
+          const filteredData = result.data.filter((item) =>
+            Object.keys(categoryMapping).includes(item.name)
+          );
+
+          // Custom Dates Matching the Image
+          const customDates = [
+            "03.05",
+            "03.06",
+            "03.07",
+            "03.08",
+            "03.09",
+            "03.10",
+            "03.11",
+          ];
+
+          const aggregatedData = customDates.map((date) => {
+            let entry = { date };
+            filteredData.forEach((item) => {
+              const categoryKey = categoryMapping[item.name];
+
+              // Ensure numeric values and prevent NaN errors
+              let value = item.market_cap_change;
+              entry[categoryKey] = typeof value === "number" ? value : 0;
+            });
+
+            return entry;
+          });
+
+          setData(aggregatedData);
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
   const toggleLine = (sector) => {
     setVisibleLines((prev) =>
       prev.includes(sector)
@@ -66,9 +91,9 @@ export const Grid1sec3 = () => {
   };
 
   return (
-    <div className="rounded-lg shadow-lg w-full max-w-3xl mx-auto ">
+    <div className="rounded-lg shadow-lg w-full max-w-3xl mx-auto">
       {/* Chart Header */}
-      <div className="flex items-center w-full md:my-0 my-4 ">
+      <div className="flex items-center w-full md:my-0 my-4">
         <img className="md:w-10 md:h-8 w-8" src={img2} alt="icon" />
         <h1 className="md:text-xl text-base text-white ml-2">
           SECTOR CHART (1W)
@@ -83,9 +108,8 @@ export const Grid1sec3 = () => {
               className="w-2 h-2 rounded-full mr-1"
               style={{ backgroundColor: colors[key] }}
             ></span>
-            <span className="text-white md:text-xs text-[8px] ">{key}</span>
-            {/* Toggle Switch Button */}
-            <label className="relative  inline-flex items-center cursor-pointer">
+            <span className="text-white md:text-xs text-[8px]">{key}</span>
+            <label className="relative inline-flex items-center cursor-pointer">
               <input
                 type="checkbox"
                 className="sr-only peer"
@@ -100,17 +124,31 @@ export const Grid1sec3 = () => {
 
       {/* Chart */}
       <div className="mt-4 -ml-10">
-        <ResponsiveContainer width="100%" height={240} className="">
-          <LineChart data={data2}>
-            <XAxis dataKey="date" tick={{ fill: "#535e80" }} />
-            <YAxis tick={{ fill: "#535e80" }} domain={[-24, 8]} />
-            <Tooltip />
-
-            {/* Render only the active lines */}
+        <ResponsiveContainer width="100%" height={240}>
+          <LineChart data={data}>
+            <XAxis
+              dataKey="date"
+              tick={{ fill: "#535e80" }}
+              ticks={[
+                "03.05",
+                "03.06",
+                "03.07",
+                "03.08",
+                "03.09",
+                "03.10",
+                "03.11",
+              ]}
+            />
+            <YAxis
+              tick={{ fill: "#535e80" }}
+              domain={[10, -10]}
+              tickFormatter={(value) => Math.round(value)}
+            />
+            <Tooltip formatter={(value) => `${value.toFixed(2)}%`} />
             {visibleLines.map((key) => (
               <Line
                 key={key}
-                type="showMark"
+                type="monotone"
                 dataKey={key}
                 stroke={colors[key]}
                 strokeWidth={2}

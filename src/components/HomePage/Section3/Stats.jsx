@@ -1,7 +1,7 @@
 import img1 from "../../../assets/Images/widi4.png";
 import img2 from "../../../assets/Images/stat2.png";
 
-export const Grid2sec4 = () => {
+export const Stats = () => {
   return (
     <div className="md:bg-[#0b0d21] border-1 border-[#1d1c44] text-white p-4 rounded-2xl  shadow-lg">
       {/* Header Section */}
